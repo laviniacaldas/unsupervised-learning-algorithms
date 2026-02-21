@@ -6,13 +6,10 @@ This repository contains from-scratch implementations of classical
 unsupervised learning and probabilistic modeling algorithms using Python
 and NumPy.
 
-The primary objective of this project is to explore the mathematical
-foundations, numerical behavior, and algorithmic structure of clustering
-and statistical sequence models without relying on high-level machine
-learning libraries.
-
-The implementations emphasize clarity, mathematical transparency, and
-direct correspondence with theoretical formulations.
+The objective is to explore the mathematical foundations, numerical
+behavior, and algorithmic structure of clustering and statistical
+sequence models without relying on high-level machine learning
+libraries.
 
 ------------------------------------------------------------------------
 
@@ -20,26 +17,29 @@ direct correspondence with theoretical formulations.
 
 ### 1. K-Means Clustering
 
-K-Means partitions a dataset into ( K ) clusters by minimizing the
+K-Means partitions a dataset into $K$ clusters by minimizing the
 within-cluster sum of squared distances:
 
-\[ `\underset{\{\mu_k\}}{\arg\min}`{=tex} `\sum`{=tex}*{k=1}\^{K}
-`\sum`{=tex}*{x_i `\in `{=tex}C_k} \| x_i - `\mu`{=tex}\_k \|\^2 \]
+$$
+\underset{\{\mu_k\}}{\arg\min} \sum_{k=1}^{K} \sum_{x_i \in C_k} \| x_i - \mu_k \|^2
+$$
 
 Where:
 
--   ( `\mu`{=tex}\_k ) is the centroid of cluster ( k )
--   ( C_k ) is the set of samples assigned to cluster ( k )
+-   $\mu_k$ is the centroid of cluster $k$
+-   $C_k$ is the set of samples assigned to cluster $k$
 
-The algorithm iteratively alternates between:
+Assignment step:
 
-1.  Assignment step\
-    \[ C_k = { x_i : \|x_i - `\mu`{=tex}\_k\|\^2 `\leq `{=tex}\|x_i -
-    `\mu`{=tex}\_j\|\^2, `\forall `{=tex}j } \]
+$$
+C_k = \{ x_i : \|x_i - \mu_k\|^2 \leq \|x_i - \mu_j\|^2, \forall j \}
+$$
 
-2.  Update step\
-    \[ `\mu`{=tex}*k = `\frac{1}{|C_k|}`{=tex} `\sum`{=tex}*{x_i
-    `\in `{=tex}C_k} x_i \]
+Update step:
+
+$$
+\mu_k = \frac{1}{|C_k|} \sum_{x_i \in C_k} x_i
+$$
 
 ------------------------------------------------------------------------
 
@@ -48,44 +48,61 @@ The algorithm iteratively alternates between:
 A Gaussian Mixture Model represents the data distribution as a weighted
 sum of Gaussian components:
 
-\[ p(x) = `\sum`{=tex}\_{k=1}\^{K} `\pi`{=tex}\_k `\mathcal{N}`{=tex}(x
-`\mid `{=tex}`\mu`{=tex}\_k, `\Sigma`{=tex}\_k) \]
+$$
+p(x) = \sum_{k=1}^{K} \pi_k \mathcal{N}(x \mid \mu_k, \Sigma_k)
+$$
 
 Where:
 
--   ( `\pi`{=tex}*k ) are mixture weights, such that (
-    `\sum`{=tex}*{k=1}\^{K} `\pi`{=tex}\_k = 1 )
--   ( `\mu`{=tex}\_k ) is the mean vector
--   ( `\Sigma`{=tex}\_k ) is the covariance matrix
+-   $\pi_k$ are mixture weights, such that $\sum_{k=1}^{K} \pi_k = 1$
+-   $\mu_k$ is the mean vector
+-   $\Sigma_k$ is the covariance matrix
 
 Parameter estimation is performed using the Expectation-Maximization
 (EM) algorithm.
 
-### E-Step (Responsibilities)
+E-step (Responsibilities):
 
-\[ `\gamma`{=tex}*{ik} =
-`\frac{\pi_k \mathcal{N}(x_i \mid \mu_k, \Sigma_k)}`{=tex}
-{`\sum`{=tex}*{j=1}\^{K} `\pi`{=tex}\_j `\mathcal{N}`{=tex}(x_i
-`\mid `{=tex}`\mu`{=tex}\_j, `\Sigma`{=tex}\_j)} \]
+$$
+\gamma_{ik} = 
+\frac{\pi_k \mathcal{N}(x_i \mid \mu_k, \Sigma_k)}
+{\sum_{j=1}^{K} \pi_j \mathcal{N}(x_i \mid \mu_j, \Sigma_j)}
+$$
 
-### M-Step (Parameter Updates)
+M-step (Parameter Updates)
 
-Mixture weights: \[ `\pi`{=tex}*k = `\frac{1}{N}`{=tex}
-`\sum`{=tex}*{i=1}\^{N} `\gamma`{=tex}\_{ik} \]
+Mixture weights:
 
-Means: \[ `\mu`{=tex}*k = `\frac{\sum_{i=1}^{N} \gamma_{ik} x_i}`{=tex}
-{`\sum`{=tex}*{i=1}\^{N} `\gamma`{=tex}\_{ik}} \]
+$$
+\pi_k = \frac{1}{N} \sum_{i=1}^{N} \gamma_{ik}
+$$
 
-Covariances: \[ `\Sigma`{=tex}*k =
-`\frac{\sum_{i=1}^{N} \gamma_{ik} (x_i - \mu_k)(x_i - \mu_k)^T}`{=tex}
-{`\sum`{=tex}*{i=1}\^{N} `\gamma`{=tex}\_{ik}} \]
+Means:
 
-The log-likelihood maximized at each iteration is:
+$$
+\mu_k = 
+\frac{\sum_{i=1}^{N} \gamma_{ik} x_i}
+{\sum_{i=1}^{N} \gamma_{ik}}
+$$
 
-\[ `\mathcal{L}`{=tex} = `\sum`{=tex}*{i=1}\^{N}
-`\log `{=tex}`\left`{=tex}( `\sum`{=tex}*{k=1}\^{K} `\pi`{=tex}\_k
-`\mathcal{N}`{=tex}(x_i `\mid `{=tex}`\mu`{=tex}\_k, `\Sigma`{=tex}\_k)
-`\right`{=tex}) \]
+Covariances:
+
+$$
+\Sigma_k = 
+\frac{\sum_{i=1}^{N} \gamma_{ik} (x_i - \mu_k)(x_i - \mu_k)^T}
+{\sum_{i=1}^{N} \gamma_{ik}}
+$$
+
+Log-likelihood maximized at each iteration:
+
+$$
+\mathcal{L} = 
+\sum_{i=1}^{N} 
+\log \left( 
+\sum_{k=1}^{K} 
+\pi_k \mathcal{N}(x_i \mid \mu_k, \Sigma_k) 
+\right)
+$$
 
 ------------------------------------------------------------------------
 
@@ -93,17 +110,19 @@ The log-likelihood maximized at each iteration is:
 
 A Hidden Markov Model is defined by:
 
--   A set of hidden states ( S = {s_1, `\dots`{=tex}, s_K} )
--   Transition probabilities ( A\_{ij} = P(s\_{t+1}=j
-    `\mid `{=tex}s_t=i) )
--   Emission probabilities ( B_j(x) = P(x_t `\mid `{=tex}s_t=j) )
--   Initial state distribution ( `\pi `{=tex})
+-   Hidden states $S = \{s_1, \dots, s_K\}$
+-   Transition probabilities $A_{ij} = P(s_{t+1}=j \mid s_t=i)$
+-   Emission probabilities $B_j(x) = P(x_t \mid s_t=j)$
+-   Initial state distribution $\pi$
 
-The joint probability of a state sequence ( S ) and observation sequence
-( X ) is:
+Joint probability of a state sequence $S$ and observation sequence $X$:
 
-\[ P(X, S) = `\pi`{=tex}*{s_1} `\prod`{=tex}*{t=2}\^{T} A\_{s\_{t-1},
-s_t} `\prod`{=tex}*{t=1}\^{T} B*{s_t}(x_t) \]
+$$
+P(X, S) = 
+\pi_{s_1} 
+\prod_{t=2}^{T} A_{s_{t-1}, s_t}
+\prod_{t=1}^{T} B_{s_t}(x_t)
+$$
 
 Learning is typically performed via the Baum-Welch algorithm, a special
 case of EM.
@@ -111,8 +130,6 @@ case of EM.
 ------------------------------------------------------------------------
 
 ## Mathematical Focus
-
-The project emphasizes:
 
 -   Maximum Likelihood Estimation (MLE)
 -   Expectation-Maximization framework
@@ -140,8 +157,6 @@ aplicacao_kmeans.py -- K-Means usage example
 ------------------------------------------------------------------------
 
 ## Research and Extension Directions
-
-Potential future developments include:
 
 -   Numerical stabilization using log-sum-exp
 -   Vectorized implementations for computational efficiency
